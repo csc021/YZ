@@ -25,6 +25,7 @@ class ParcelServiceTest {
 
     @Test
     void inboundInitializesParcelAndSavesIt() {
+        doReturn(false).when(parcelService).checkTrackingNoExists(anyString());
         doReturn(true).when(parcelService).save(any(Parcel.class));
         ParcelInboundRequest request = new ParcelInboundRequest();
         request.setTrackingNo("YT123");

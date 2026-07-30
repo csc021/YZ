@@ -63,7 +63,6 @@ public class ParcelServiceImpl extends ServiceImpl<ParcelMapper, Parcel> impleme
 
         parcel.setPickupCode(PickupCodeUtil.generate());
         parcel.setStatus(0);
-        parcel.setPickupRequested(0);
         parcel.setInboundTime(DateUtil.nowStr());
         parcel.setCreatedAt(DateUtil.nowStr());
         save(parcel);
@@ -118,28 +117,7 @@ public class ParcelServiceImpl extends ServiceImpl<ParcelMapper, Parcel> impleme
         if (!parcel.getRecipientPhone().equals(user.getPhone())) {
             return false;
         }
-        // 自助取件自动标记为已申请
-        parcel.setPickupRequested(1);
-        updateById(parcel);
         return completeOutbound(parcel, userId);
-    }
-
-    @Override
-    @Transactional
-    public boolean requestPickup(Long parcelId, Long userId) {
-        Parcel parcel = getById(parcelId);
-        User user = userService.findById(userId);
-        if (parcel == null || user == null || !Integer.valueOf(0).equals(parcel.getStatus())) {
-            return false;
-        }
-        if (!parcel.getRecipientPhone().equals(user.getPhone())) {
-            return false;
-        }
-        if (Integer.valueOf(1).equals(parcel.getPickupRequested())) {
-            return true; // 已申请，幂等
-        }
-        parcel.setPickupRequested(1);
-        return updateById(parcel);
     }
 
     @Override
@@ -239,10 +217,6 @@ public class ParcelServiceImpl extends ServiceImpl<ParcelMapper, Parcel> impleme
 
     private boolean completeOutbound(Parcel parcel, Long outboundBy) {
         if (parcel == null || !Integer.valueOf(0).equals(parcel.getStatus())) {
-            return false;
-        }
-        // 必须用户先提交取件申请，快递员方可出库
-        if (!Integer.valueOf(1).equals(parcel.getPickupRequested())) {
             return false;
         }
         parcel.setStatus(1);

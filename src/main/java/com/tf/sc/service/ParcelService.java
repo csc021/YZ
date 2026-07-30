@@ -25,8 +25,6 @@ public interface ParcelService extends IService<Parcel> {
 
     boolean selfPickup(Long parcelId, Long userId);
 
-    boolean requestPickup(Long parcelId, Long userId);
-
     Page<Parcel> query(ParcelQueryRequest request);
 
     List<ParcelPrintResponse> batchPrint(List<String> trackingNos, List<Long> parcelIds);

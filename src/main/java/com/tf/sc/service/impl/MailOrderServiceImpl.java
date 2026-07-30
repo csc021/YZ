@@ -6,15 +6,25 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.tf.sc.dto.request.MailOrderSubmitRequest;
 import com.tf.sc.dto.response.MailOrderStatsResponse;
 import com.tf.sc.entity.MailOrder;
+import com.tf.sc.entity.Shelf;
 import com.tf.sc.mapper.MailOrderMapper;
 import com.tf.sc.service.MailOrderService;
+import com.tf.sc.service.ShelfService;
 import com.tf.sc.utils.BeanCopyUtil;
 import com.tf.sc.utils.DateUtil;
+import com.tf.sc.utils.PickupCodeUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 @Service
 public class MailOrderServiceImpl extends ServiceImpl<MailOrderMapper, MailOrder> implements MailOrderService {
+
+    @Autowired
+    private ShelfService shelfService;
 
     @Override
     @Transactional
@@ -68,8 +78,37 @@ public class MailOrderServiceImpl extends ServiceImpl<MailOrderMapper, MailOrder
             return false;
         }
         order.setStatus(status);
+
+        // 状态为"已送达"时，生成订单号、取件码并随机分配货架
+        if (status == 3) {
+            if (order.getOrderNo() == null) {
+                order.setOrderNo(generateOrderNo());
+            }
+            if (order.getPickupCode() == null) {
+                order.setPickupCode(PickupCodeUtil.generate());
+            }
+            if (order.getShelfId() == null && order.getStationId() != null) {
+                order.setShelfId(randomSelectShelf(order.getStationId()));
+            }
+        }
+
         order.setUpdatedAt(DateUtil.nowStr());
         return updateById(order);
+    }
+
+    private String generateOrderNo() {
+        String timestamp = DateUtil.nowStr().replaceAll("[-:\\s]", "");
+        int random = ThreadLocalRandom.current().nextInt(1000, 9999);
+        return "MO" + timestamp + random;
+    }
+
+    private Long randomSelectShelf(Long stationId) {
+        List<Shelf> shelves = shelfService.getNormalByStationId(stationId);
+        if (shelves == null || shelves.isEmpty()) {
+            return null;
+        }
+        int index = ThreadLocalRandom.current().nextInt(shelves.size());
+        return shelves.get(index).getId();
     }
 
     @Override

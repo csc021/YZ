@@ -22,8 +22,6 @@ public class Parcel {
     private String recipientPhone;
     /** 包裹状态：0-待取 1-已取 2-滞留 */
     private Integer status;
-    /** 取件申请：0-未申请 1-已申请（用户提交申请后快递员方可出库） */
-    private Integer pickupRequested;
     /** 入库时间 */
     private String inboundTime;
     /** 出库时间 */

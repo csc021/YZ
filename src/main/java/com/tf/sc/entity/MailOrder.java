@@ -24,6 +24,9 @@ public class MailOrder {
     private Long carrierId;
     private Long stationId;
     private Integer status;
+    private String orderNo;
+    private String pickupCode;
+    private Long shelfId;
     private String remark;
     private String createdAt;
     private String updatedAt;
