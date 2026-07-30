@@ -213,8 +213,8 @@ public class ParcelServiceImpl extends ServiceImpl<ParcelMapper, Parcel> impleme
         if (parcel == null || !Integer.valueOf(0).equals(parcel.getStatus())) {
             return false;
         }
-        parcel.setPickupRequested(1);
-        return updateById(parcel);
+        // 直接 SQL 更新，绕过 MyBatis-Plus 字段策略
+        return baseMapper.requestPickup(parcelId) > 0;
     }
 
     @Override

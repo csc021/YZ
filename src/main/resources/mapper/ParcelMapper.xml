@@ -34,4 +34,9 @@
             #{id}
         </foreach>
     </update>
+
+    <!-- 取件申请：标记 pickup_requested = 1 -->
+    <update id="requestPickup">
+        UPDATE parcel SET pickup_requested = 1 WHERE id = #{id} AND status = 0
+    </update>
 </mapper>

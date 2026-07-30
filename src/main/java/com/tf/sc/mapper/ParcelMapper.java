@@ -16,4 +16,7 @@ public interface ParcelMapper extends BaseMapper<Parcel> {
                                        @Param("status") Integer status);
 
     int batchUpdateStatus(@Param("ids") List<Long> ids, @Param("status") Integer status);
+
+    /** 取件申请：XML 实现，绕过 MyBatis-Plus 字段策略 */
+    int requestPickup(@Param("id") Long id);
 }
