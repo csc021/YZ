@@ -25,6 +25,13 @@ public interface ParcelService extends IService<Parcel> {
 
     boolean selfPickup(Long parcelId, Long userId);
 
+    /**
+     * 取件申请：用户点击「出库该快递」时调用，标记 pickup_requested=1
+     * @param parcelId 包裹ID
+     * @return true=成功 false=失败
+     */
+    boolean requestPickup(Long parcelId);
+
     Page<Parcel> query(ParcelQueryRequest request);
 
     List<ParcelPrintResponse> batchPrint(List<String> trackingNos, List<Long> parcelIds);

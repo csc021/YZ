@@ -12,6 +12,7 @@ public class ParcelQueryRequest {
     private String recipientPhone;
     private String recipientName;
     private Integer status;
+    private Integer pickupRequested;
     private String inboundStartTime;
     private String inboundEndTime;
     private Long pageNum = 1L;

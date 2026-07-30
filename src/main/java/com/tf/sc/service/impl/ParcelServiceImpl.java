@@ -207,6 +207,17 @@ public class ParcelServiceImpl extends ServiceImpl<ParcelMapper, Parcel> impleme
     }
 
     @Override
+    public boolean requestPickup(Long parcelId) {
+        if (parcelId == null) return false;
+        Parcel parcel = getById(parcelId);
+        if (parcel == null || !Integer.valueOf(0).equals(parcel.getStatus())) {
+            return false;
+        }
+        parcel.setPickupRequested(1);
+        return updateById(parcel);
+    }
+
+    @Override
     public boolean checkTrackingNoExists(String trackingNo) {
         if (!hasText(trackingNo)) {
             return false;
@@ -256,6 +267,7 @@ public class ParcelServiceImpl extends ServiceImpl<ParcelMapper, Parcel> impleme
         if (request.getCarrierId() != null) wrapper.eq(Parcel::getCarrierId, request.getCarrierId());
         if (hasText(request.getRecipientPhone())) wrapper.eq(Parcel::getRecipientPhone, request.getRecipientPhone());
         if (request.getStatus() != null) wrapper.eq(Parcel::getStatus, request.getStatus());
+        if (request.getPickupRequested() != null) wrapper.eq(Parcel::getPickupRequested, request.getPickupRequested());
         if (hasText(request.getInboundStartTime())) wrapper.ge(Parcel::getInboundTime, request.getInboundStartTime());
         if (hasText(request.getInboundEndTime())) wrapper.le(Parcel::getInboundTime, request.getInboundEndTime());
         return wrapper;

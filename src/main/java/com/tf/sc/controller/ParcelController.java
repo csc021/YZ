@@ -169,6 +169,25 @@ public class ParcelController {
         return Result.success(parcelService.query(request));
     }
 
+    @RequireRole({"0", "1", "2"})
+    @PostMapping("/{id}/request-pickup")
+    public Result<Boolean> requestPickup(@PathVariable Long id) {
+        User user = currentUser();
+        if (user == null) {
+            return Result.error(401, "Unauthorized");
+        }
+        Parcel parcel = parcelService.getById(id);
+        if (parcel == null) {
+            return Result.error("包裹不存在");
+        }
+        // 仅收件人本人可申请取件
+        if (!parcel.getRecipientPhone().equals(user.getPhone())) {
+            return Result.error(403, "Forbidden");
+        }
+        boolean success = parcelService.requestPickup(id);
+        return success ? Result.success(true) : Result.error("申请取件失败");
+    }
+
     @RequireRole({"0"})
     @PostMapping("/{id}/self-pickup")
     public Result<Boolean> selfPickup(@PathVariable Long id, @RequestBody(required = false) ParcelSelfPickupRequest request) {

@@ -38,6 +38,8 @@ public class Parcel {
     private Double sensorTemp;
     /** 入库时湿度(%) */
     private Double sensorHumidity;
+    /** 取件申请: 0-未申请 1-已申请（用户提交后快递员方可出库） */
+    private Integer pickupRequested;
     /** 记录创建时间 */
     private String createdAt;
 }
