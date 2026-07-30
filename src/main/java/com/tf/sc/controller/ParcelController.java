@@ -107,19 +107,19 @@ public class ParcelController {
     @PostMapping("/outbound/by-code")
     public Result<Boolean> outboundByCode(@RequestParam String pickupCode) {
         boolean success = parcelService.outboundByCode(pickupCode, currentUserId());
-        return success ? Result.success(true) : Result.error("出库失败，包裹不存在或取件信息不匹配");
+        return success ? Result.success(true) : Result.error("无法取件，请等待用户提交取件申请后再操作");
     }
 
     @PostMapping("/outbound/by-tracking")
     public Result<Boolean> outboundByTracking(@RequestParam String trackingNo) {
         boolean success = parcelService.outboundByTracking(trackingNo, currentUserId());
-        return success ? Result.success(true) : Result.error("出库失败，包裹不存在或取件信息不匹配");
+        return success ? Result.success(true) : Result.error("无法取件，请等待用户提交取件申请后再操作");
     }
 
     @PostMapping("/outbound/by-phone")
     public Result<Boolean> outboundByPhone(@RequestParam String recipientPhone) {
         boolean success = parcelService.outboundByPhone(recipientPhone, currentUserId());
-        return success ? Result.success(true) : Result.error("出库失败，包裹不存在或取件信息不匹配");
+        return success ? Result.success(true) : Result.error("无法取件，请等待用户提交取件申请后再操作");
     }
 
     @RequireRole({"0", "1", "2"})
@@ -167,6 +167,17 @@ public class ParcelController {
         request.setPageNum(pageNum);
         request.setPageSize(pageSize);
         return Result.success(parcelService.query(request));
+    }
+
+    @RequireRole({"0"})
+    @PostMapping("/{id}/request-pickup")
+    public Result<Boolean> requestPickup(@PathVariable Long id) {
+        Long userId = currentUserId();
+        if (userId == null) {
+            return Result.error(401, "Unauthorized");
+        }
+        boolean success = parcelService.requestPickup(id, userId);
+        return success ? Result.success(true) : Result.error("申请取件失败，包裹不存在或不属于您");
     }
 
     @RequireRole({"0"})
