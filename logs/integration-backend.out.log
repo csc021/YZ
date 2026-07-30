@@ -1,0 +1,50 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.2.2.RELEASE)
+
+2026-07-17 14:50:41.842  INFO 16612 --- [           main] com.tf.sc.KsApplication                  : Starting KsApplication on DESKTOP-A3TBNL7 with PID 16612 (C:\Users\Administrator\Desktop\ks-4\target\classes started by Administrator in C:\Users\Administrator\Desktop\ks-4)
+2026-07-17 14:50:41.842  INFO 16612 --- [           main] com.tf.sc.KsApplication                  : The following profiles are active: dev
+2026-07-17 14:50:42.254  INFO 16612 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2026-07-17 14:50:42.261  INFO 16612 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-07-17 14:50:42.292  INFO 16612 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 26ms. Found 0 Redis repository interfaces.
+2026-07-17 14:50:42.491  INFO 16612 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-07-17 14:50:42.969  INFO 16612 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2026-07-17 14:50:42.975  INFO 16612 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-17 14:50:42.975  INFO 16612 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.29]
+2026-07-17 14:50:43.042  INFO 16612 --- [           main] o.a.c.c.C.[.[localhost].[/station/v1]    : Initializing Spring embedded WebApplicationContext
+2026-07-17 14:50:43.042  INFO 16612 --- [           main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1165 ms
+2026-07-17 14:50:43.102  INFO 16612 --- [           main] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2026-07-17 14:50:43.170  INFO 16612 --- [           main] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+ _ _   |_  _ _|_. ___ _ |    _ 
+| | |\/|_)(_| | |_\  |_)||_|_\ 
+     /               |         
+                        3.5.3.1 
+2026-07-17 14:50:44.128  INFO 16612 --- [           main] com.tf.sc.controller.RegionController    : 行政区划数据加载完成，共 34 个省级区域
+2026-07-17 14:50:44.357  INFO 16612 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@f9a5e3f, org.springframework.security.web.context.SecurityContextPersistenceFilter@399f5daf, org.springframework.security.web.header.HeaderWriterFilter@6210666c, org.springframework.security.web.authentication.logout.LogoutFilter@2d07aacc, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@370a8b6e, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@401926df, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4aac81ca, org.springframework.security.web.session.SessionManagementFilter@4bf8b77, org.springframework.security.web.access.ExceptionTranslationFilter@5cbe95b1, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@56266bda]
+2026-07-17 14:50:44.375  INFO 16612 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2026-07-17 14:50:44.378  INFO 16612 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
+2026-07-17 14:50:44.473  INFO 16612 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2026-07-17 14:50:44.708  INFO 16612 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path '/station/v1'
+2026-07-17 14:50:44.713  INFO 16612 --- [           main] com.tf.sc.KsApplication                  : Started KsApplication in 3.102 seconds (JVM running for 3.372)
+2026-07-17 14:51:30.241  INFO 16612 --- [nio-8080-exec-1] o.a.c.c.C.[.[localhost].[/station/v1]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-07-17 14:51:30.244  INFO 16612 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-07-17 14:51:30.250  INFO 16612 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 6 ms
+2026-07-17 14:51:31.518  INFO 16612 --- [nio-8080-exec-1] com.tf.sc.utils.EmailUtil                : 邮件验证码已发送: to=apply1784271090@test.local, code=451797
+2026-07-17 14:51:31.518  INFO 16612 --- [nio-8080-exec-1] c.t.s.s.i.VerificationCodeServiceImpl    : 邮箱验证码已生成: 邮箱=apply1784271090@test.local, 验证码=451797, 过期时间=2026-07-17 14:56:30
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by com.baomidou.mybatisplus.core.toolkit.SetAccessibleAction (file:/C:/Users/Administrator/.m2/repository/com/baomidou/mybatis-plus-core/3.5.3.1/mybatis-plus-core-3.5.3.1.jar) to field java.lang.invoke.SerializedLambda.capturingClass
+WARNING: Please consider reporting this to the maintainers of com.baomidou.mybatisplus.core.toolkit.SetAccessibleAction
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:2.2.2.RELEASE:run (default-cli) on project ks-1: Application finished with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

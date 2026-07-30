@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.sc.mapper.CarrierMapper">
+
+    <!-- 条件模糊查询快递公司 -->
+    <select id="selectCarrierByCondition" resultType="com.tf.sc.entity.Carrier">
+        SELECT * FROM carrier
+        <where>
+            <if test="name != null and name != ''">
+                name LIKE CONCAT('%',#{name},'%')
+            </if>
+            <if test="code != null and code != ''">
+                AND code = #{code}
+            </if>
+        </where>
+        ORDER BY sort ASC, created_at DESC
+    </select>
+
+    <!-- 批量删除快递公司 -->
+    <delete id="deleteBatchByIds">
+        DELETE FROM carrier WHERE id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

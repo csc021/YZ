@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.sc.mapper.VerificationCodeMapper">
+
+    <resultMap id="BaseResultMap" type="com.tf.sc.entity.VerificationCode">
+        <id column="id" property="id"/>
+        <result column="email" property="email"/>
+        <result column="code" property="code"/>
+        <result column="type" property="type"/>
+        <result column="is_used" property="isUsed"/>
+        <result column="expire_time" property="expireTime"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.tf.sc.entity.VerificationCode" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sms_code (email, code, type, is_used, expire_time, created_at)
+        VALUES (#{email}, #{code}, #{type}, #{isUsed}, #{expireTime}, #{createdAt})
+    </insert>
+
+    <select id="findLatestByEmailAndType" resultMap="BaseResultMap">
+        SELECT * FROM sms_code
+        WHERE email = #{email} AND type = #{type} AND is_used = 0
+        ORDER BY created_at DESC
+            LIMIT 1
+    </select>
+
+    <select id="findByEmailTypeCode" resultMap="BaseResultMap">
+        SELECT * FROM sms_code
+        WHERE email = #{email} AND type = #{type} AND code = #{code} AND is_used = 0
+        ORDER BY created_at DESC
+            LIMIT 1
+    </select>
+
+    <update id="markAsUsed">
+        UPDATE sms_code SET is_used = 1 WHERE id = #{id}
+    </update>
+
+    <delete id="deleteExpired">
+        DELETE FROM sms_code WHERE expire_time &lt; NOW()
+    </delete>
+
+    <delete id="deleteByEmail">
+        DELETE FROM sms_code WHERE email = #{email}
+    </delete>
+
+</mapper>

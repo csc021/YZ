@@ -1,0 +1,61 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------------< SnackGame:ks-1 >---------------------------
+[INFO] Building ks-1 1.0-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot-maven-plugin:2.2.2.RELEASE:run (default-cli) > test-compile @ ks-1 >>>
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ ks-1 ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 3 resources
+[INFO] Copying 16 resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ ks-1 ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ ks-1 ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory C:\Users\Administrator\Desktop\ks-1\src\test\resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ ks-1 ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] <<< spring-boot-maven-plugin:2.2.2.RELEASE:run (default-cli) < test-compile @ ks-1 <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:2.2.2.RELEASE:run (default-cli) @ ks-1 ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.2.2.RELEASE)
+
+2026-07-14 21:54:46.230  INFO 31208 --- [           main] com.tf.sc.KsApplication                  : Starting KsApplication on BJ-20250708BYAA with PID 31208 (C:\Users\Administrator\Desktop\ks-1\target\classes started by Administrator in C:\Users\Administrator\Desktop\ks-1)
+2026-07-14 21:54:46.231  INFO 31208 --- [           main] com.tf.sc.KsApplication                  : The following profiles are active: dev
+2026-07-14 21:54:46.642  INFO 31208 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2026-07-14 21:54:46.644  INFO 31208 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-07-14 21:54:46.669  INFO 31208 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 15ms. Found 0 Redis repository interfaces.
+2026-07-14 21:54:46.832  INFO 31208 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2026-07-14 21:54:47.156  INFO 31208 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2026-07-14 21:54:47.162  INFO 31208 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-07-14 21:54:47.163  INFO 31208 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.29]
+2026-07-14 21:54:47.198  INFO 31208 --- [           main] o.a.c.c.C.[.[localhost].[/station/v1]    : Initializing Spring embedded WebApplicationContext
+2026-07-14 21:54:47.198  INFO 31208 --- [           main] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 946 ms
+2026-07-14 21:54:47.251  INFO 31208 --- [           main] c.a.d.s.b.a.DruidDataSourceAutoConfigure : Init DruidDataSource
+2026-07-14 21:54:47.310  INFO 31208 --- [           main] com.alibaba.druid.pool.DruidDataSource   : {dataSource-1} inited
+ _ _   |_  _ _|_. ___ _ |    _ 
+| | |\/|_)(_| | |_\  |_)||_|_\ 
+     /               |         
+                        3.5.3.1 
+2026-07-14 21:54:47.978  INFO 31208 --- [           main] com.tf.sc.controller.RegionController    : 行政区划数据加载完成，共 34 个省级区域
+2026-07-14 21:54:48.223  INFO 31208 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: any request, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2ffe243f, org.springframework.security.web.context.SecurityContextPersistenceFilter@67bf0480, org.springframework.security.web.header.HeaderWriterFilter@64387c17, org.springframework.security.web.authentication.logout.LogoutFilter@2753316c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2bbb44da, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@557b6a37, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@58ae402b, org.springframework.security.web.session.SessionManagementFilter@51f18e31, org.springframework.security.web.access.ExceptionTranslationFilter@2fbe26da, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7bdf61ad]
+2026-07-14 21:54:48.240  INFO 31208 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2026-07-14 21:54:48.241  INFO 31208 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
+2026-07-14 21:54:48.310  INFO 31208 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2026-07-14 21:54:48.496  INFO 31208 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path '/station/v1'
+2026-07-14 21:54:48.497  INFO 31208 --- [           main] com.tf.sc.KsApplication                  : Started KsApplication in 2.474 seconds (JVM running for 2.653)

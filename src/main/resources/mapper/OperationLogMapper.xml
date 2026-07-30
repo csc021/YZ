@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.sc.mapper.OperationLogMapper">
+    <resultMap id="BaseResultMap" type="com.tf.sc.entity.OperationLog">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="module" property="module"/>
+        <result column="action" property="action"/>
+        <result column="description" property="description"/>
+        <result column="ip" property="ip"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <!-- 按时间、用户、操作类型筛选日志 -->
+    <select id="selectLogByCondition" resultMap="BaseResultMap">
+        SELECT * FROM operation_log
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+            <if test="action != null and action != ''">
+                AND action = #{action}
+            </if>
+            <if test="startTime != null">
+                AND created_at &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND created_at &lt;= #{endTime}
+            </if>
+        </where>
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 清理指定时间前的日志 -->
+    <delete id="clearLogBeforeTime">
+        DELETE FROM operation_log WHERE created_at &lt; #{time}
+    </delete>
+</mapper>

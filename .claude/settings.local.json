@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mvn compile *)",
+      "Bash(mysqladmin ping *)",
+      "Bash(redis-cli -h 127.0.0.1 -p 6379 ping)",
+      "Bash(netstat -ano)",
+      "Bash(mysql -h 127.0.0.1 -P 3306 -u root -proot -e \"SELECT 1\")",
+      "Bash(mysql -h 127.0.0.1 -P 3306 -u root -e \"SELECT 1\")",
+      "Bash(mysql -h 127.0.0.1 -P 3306 -u root -p123456 -e \"SHOW DATABASES\")",
+      "Bash(mysql -h 127.0.0.1 -P 3306 -u root -p'csc@123123' -e \"SHOW DATABASES\")",
+      "Bash(mysql *)",
+      "Bash(mvn spring-boot:run -q)",
+      "Bash(curl -s http://localhost:8080/station/v1/auth/login -X POST -H \"Content-Type: application/json\" -d '{\"phone\":\"13800138000\",\"password\":\"123456\"}')"
+    ]
+  }
+}

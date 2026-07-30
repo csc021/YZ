@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.sc.mapper.ShelfMapper">
+
+    <resultMap id="BaseResultMap" type="com.tf.sc.entity.Shelf">
+        <id column="id" property="id"/>
+        <result column="station_id" property="stationId"/>
+        <result column="code" property="code"/>
+        <result column="floor_count" property="floorCount"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="com.tf.sc.entity.Shelf" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO shelf (station_id, code, floor_count, status, created_at)
+        VALUES (#{stationId}, #{code}, #{floorCount}, #{status}, #{createdAt})
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="com.tf.sc.entity.Shelf">
+        UPDATE shelf
+        SET code = #{code}, floor_count = #{floorCount}, status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM shelf WHERE id = #{id}
+    </select>
+
+    <!-- 根据驿站ID查询所有货架 -->
+    <select id="findByStationId" resultMap="BaseResultMap">
+        SELECT * FROM shelf WHERE station_id = #{stationId}
+        ORDER BY code ASC
+    </select>
+
+    <!-- 根据驿站ID和编码查询 -->
+    <select id="findByStationIdAndCode" resultMap="BaseResultMap">
+        SELECT * FROM shelf WHERE station_id = #{stationId} AND code = #{code}
+    </select>
+
+    <!-- 查询驿站下正常状态的货架 -->
+    <select id="findNormalByStationId" resultMap="BaseResultMap">
+        SELECT * FROM shelf WHERE station_id = #{stationId} AND status = 1
+        ORDER BY code ASC
+    </select>
+
+    <!-- 删除 -->
+    <delete id="deleteById">
+        DELETE FROM shelf WHERE id = #{id}
+    </delete>
+
+    <!-- 更新状态 -->
+    <update id="updateStatus">
+        UPDATE shelf SET status = #{status} WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.sc.mapper.SensorReadingMapper">
+
+    <select id="selectLatestByZoneId" resultType="com.tf.sc.entity.SensorReading">
+        SELECT * FROM sensor_reading
+        WHERE zone_id = #{zoneId}
+        ORDER BY read_at DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectLatestByStationId" resultType="com.tf.sc.entity.SensorReading">
+        SELECT sr.* FROM sensor_reading sr
+        INNER JOIN (
+            SELECT zone_id, MAX(read_at) AS max_read
+            FROM sensor_reading
+            WHERE station_id = #{stationId}
+            GROUP BY zone_id
+        ) latest ON (sr.zone_id = latest.zone_id OR (sr.zone_id IS NULL AND latest.zone_id IS NULL))
+                 AND sr.read_at = latest.max_read
+        WHERE sr.station_id = #{stationId}
+    </select>
+
+    <delete id="deleteOlderThan">
+        DELETE FROM sensor_reading WHERE read_at &lt; #{deadline}
+    </delete>
+</mapper>

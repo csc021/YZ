@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.sc.mapper.SensorDataMapper">
+
+    <resultMap id="baseMap" type="com.tf.sc.entity.SensorData">
+        <id property="id" column="id"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="temperature" column="temperature"/>
+        <result property="humidity" column="humidity"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.tf.sc.entity.SensorData" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_sensor_data (device_id, temperature, humidity)
+        VALUES (#{deviceId}, #{temperature}, #{humidity})
+    </insert>
+
+    <select id="selectLatest" resultMap="baseMap">
+        SELECT id, device_id, temperature, humidity, create_time
+        FROM t_sensor_data
+        WHERE device_id = #{deviceId}
+        ORDER BY create_time DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectRecent" resultMap="baseMap">
+        SELECT id, device_id, temperature, humidity, create_time
+        FROM t_sensor_data
+        WHERE device_id = #{deviceId}
+        ORDER BY create_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectAll" resultMap="baseMap">
+        SELECT id, device_id, temperature, humidity, create_time
+        FROM t_sensor_data
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectDeviceList" resultType="java.util.HashMap">
+        SELECT device_id AS deviceId,
+               MAX(create_time) AS lastTime,
+               COUNT(*) AS count
+        FROM t_sensor_data
+        GROUP BY device_id
+    </select>
+
+    <select id="selectOnlineDevices" resultType="java.util.HashMap">
+        SELECT t.device_id AS deviceId,
+               t.temperature AS temperature,
+               t.humidity AS humidity,
+               t.create_time AS lastTime
+        FROM t_sensor_data t
+        INNER JOIN (
+            SELECT device_id, MAX(create_time) AS max_time
+            FROM t_sensor_data
+            WHERE create_time >= DATE_SUB(NOW(), INTERVAL #{minutes} MINUTE)
+            GROUP BY device_id
+        ) latest ON t.device_id = latest.device_id AND t.create_time = latest.max_time
+    </select>
+
+    <select id="selectStats" resultType="java.util.HashMap">
+        SELECT COUNT(*) AS totalCount,
+               COUNT(DISTINCT device_id) AS deviceCount,
+               SUM(CASE WHEN DATE(create_time) = CURDATE() THEN 1 ELSE 0 END) AS todayCount
+        FROM t_sensor_data
+    </select>
+
+    <delete id="deleteOlderThan">
+        DELETE FROM t_sensor_data WHERE create_time &lt; #{deadline}
+    </delete>
+
+</mapper>

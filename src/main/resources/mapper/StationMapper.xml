@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.sc.mapper.StationMapper">
+
+    <resultMap id="BaseResultMap" type="com.tf.sc.entity.Station">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
+        <result column="address" property="address"/>
+        <result column="brand" property="brand"/>
+        <result column="manager_id" property="managerId"/>
+        <result column="status" property="status"/>
+        <result column="created_at" property="createdAt"/>
+    </resultMap>
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="com.tf.sc.entity.Station" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO station (name, province, city, district, address, brand, manager_id, status, created_at)
+        VALUES (#{name}, #{province}, #{city}, #{district}, #{address}, #{brand}, #{managerId}, #{status}, #{createdAt})
+    </insert>
+
+    <!-- 更新 -->
+    <update id="update" parameterType="com.tf.sc.entity.Station">
+        UPDATE station
+        SET name = #{name}, province = #{province}, city = #{city},
+            district = #{district}, address = #{address}, brand = #{brand},
+            manager_id = #{managerId}, status = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateBrand">
+        UPDATE station SET brand = #{brand} WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID查询 -->
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM station WHERE id = #{id}
+    </select>
+
+    <!-- 查询所有 -->
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT * FROM station ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据站长ID查询 -->
+    <select id="findByManagerId" resultMap="BaseResultMap">
+        SELECT * FROM station WHERE manager_id = #{managerId}
+    </select>
+
+    <!-- 根据状态查询 -->
+    <select id="findByStatus" resultMap="BaseResultMap">
+        SELECT * FROM station WHERE status = #{status}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 删除 -->
+    <delete id="deleteById">
+        DELETE FROM station WHERE id = #{id}
+    </delete>
+
+    <!-- 更新状态 -->
+    <update id="updateStatus">
+        UPDATE station SET status = #{status} WHERE id = #{id}
+    </update>
+
+</mapper>

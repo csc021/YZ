@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tf.sc.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.tf.sc.entity.User">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="phone" property="phone"/>
+        <result column="email" property="email"/>
+        <result column="password" property="password"/>
+        <result column="nickname" property="nickname"/>
+        <result column="avatar" property="avatar"/>
+        <result column="role" property="role"/>
+        <result column="audit_status" property="auditStatus"/>
+        <result column="reject_reason" property="rejectReason"/>
+        <result column="province" property="province"/>
+        <result column="city" property="city"/>
+        <result column="district" property="district"/>
+        <result column="address" property="address"/>
+        <result column="employee_no" property="employeeNo"/>
+        <result column="login_fail_count" property="loginFailCount"/>
+        <result column="lock_until" property="lockUntil"/>
+        <result column="deletion_status" property="deletionStatus"/>
+        <result column="deletion_time" property="deletionTime"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.tf.sc.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (username, phone, email, password, nickname, avatar, role, audit_status, reject_reason,
+                          province, city, district, address, employee_no, login_fail_count, lock_until,
+                          deletion_status, deletion_time, created_at, updated_at)
+        VALUES (#{username}, #{phone}, #{email}, #{password}, #{nickname}, #{avatar}, #{role}, #{auditStatus}, #{rejectReason},
+                #{province}, #{city}, #{district}, #{address}, #{employeeNo}, #{loginFailCount}, #{lockUntil},
+                #{deletionStatus}, #{deletionTime}, #{createdAt}, #{updatedAt})
+    </insert>
+
+    <update id="update" parameterType="com.tf.sc.entity.User">
+        UPDATE user
+        SET username = #{username}, phone = #{phone}, email = #{email}, password = #{password}, nickname = #{nickname}, avatar = #{avatar},
+            role = #{role}, audit_status = #{auditStatus}, reject_reason = #{rejectReason},
+            province = #{province}, city = #{city}, district = #{district}, address = #{address}, employee_no = #{employeeNo},
+            login_fail_count = #{loginFailCount}, lock_until = #{lockUntil},
+            deletion_status = #{deletionStatus}, deletion_time = #{deletionTime}, updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <select id="findById" resultMap="BaseResultMap">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+
+    <select id="findByUsername" resultMap="BaseResultMap">
+        SELECT * FROM user WHERE username = #{username}
+    </select>
+
+    <select id="findByPhone" resultMap="BaseResultMap">
+        SELECT * FROM user WHERE phone = #{phone}
+    </select>
+
+    <select id="findByEmail" resultMap="BaseResultMap">
+        SELECT * FROM user WHERE email = #{email}
+    </select>
+
+    <select id="findAll" resultMap="BaseResultMap">
+        SELECT * FROM user WHERE deletion_status = 0 ORDER BY created_at DESC
+    </select>
+
+    <select id="findCouriers" resultMap="BaseResultMap">
+        SELECT * FROM user WHERE deletion_status = 0 AND role = 1 ORDER BY created_at DESC
+    </select>
+
+    <select id="findDeletionPending" resultMap="BaseResultMap">
+        SELECT * FROM user WHERE deletion_status = 1 ORDER BY deletion_time ASC
+    </select>
+
+    <update id="updateLoginFailCount">
+        UPDATE user SET login_fail_count = #{count} WHERE id = #{userId}
+    </update>
+
+    <update id="lockUser">
+        UPDATE user SET lock_until = #{lockUntil} WHERE id = #{userId}
+    </update>
+
+    <update id="unlockUser">
+        UPDATE user SET lock_until = NULL, login_fail_count = 0 WHERE id = #{userId}
+    </update>
+
+</mapper>

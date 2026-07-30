@@ -1,0 +1,3 @@
+-- station seed data
+-- 请先执行 src/main/resources/data/station.sql 建表
+-- INSERT INTO `station` (`name`, `province`, `city`, `district`, `address`, `manager_id`, `status`) VALUES ('示例驿站', '广东省', '深圳', '南山区', '科技园路1号', 1, 1);
