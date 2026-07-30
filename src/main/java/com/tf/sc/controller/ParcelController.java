@@ -5,6 +5,7 @@ import com.tf.sc.annotation.RequireRole;
 import com.tf.sc.common.Constants;
 import com.tf.sc.common.Result;
 import com.tf.sc.dto.request.ParcelBatchPrintRequest;
+import com.tf.sc.dto.request.ParcelBatchSelfPickupRequest;
 import com.tf.sc.dto.request.ParcelInboundRequest;
 import com.tf.sc.dto.request.ParcelOutboundRequest;
 import com.tf.sc.dto.request.ParcelQueryRequest;
@@ -101,25 +102,25 @@ public class ParcelController {
             request.setOutboundBy(currentUserId());
         }
         boolean success = parcelService.outbound(request);
-        return success ? Result.success(true) : Result.error("出库失败，包裹不存在或取件信息不匹配");
+        return success ? Result.success(true) : Result.error("出库失败，用户尚未提交取件申请或包裹已处理");
     }
 
     @PostMapping("/outbound/by-code")
     public Result<Boolean> outboundByCode(@RequestParam String pickupCode) {
         boolean success = parcelService.outboundByCode(pickupCode, currentUserId());
-        return success ? Result.success(true) : Result.error("出库失败，包裹不存在或取件信息不匹配");
+        return success ? Result.success(true) : Result.error("出库失败，用户尚未提交取件申请或包裹已处理");
     }
 
     @PostMapping("/outbound/by-tracking")
     public Result<Boolean> outboundByTracking(@RequestParam String trackingNo) {
         boolean success = parcelService.outboundByTracking(trackingNo, currentUserId());
-        return success ? Result.success(true) : Result.error("出库失败，包裹不存在或取件信息不匹配");
+        return success ? Result.success(true) : Result.error("出库失败，用户尚未提交取件申请或包裹已处理");
     }
 
     @PostMapping("/outbound/by-phone")
     public Result<Boolean> outboundByPhone(@RequestParam String recipientPhone) {
         boolean success = parcelService.outboundByPhone(recipientPhone, currentUserId());
-        return success ? Result.success(true) : Result.error("出库失败，包裹不存在或取件信息不匹配");
+        return success ? Result.success(true) : Result.error("出库失败，用户尚未提交取件申请或包裹已处理");
     }
 
     @RequireRole({"0", "1", "2"})
@@ -169,23 +170,23 @@ public class ParcelController {
         return Result.success(parcelService.query(request));
     }
 
-    @RequireRole({"0", "1", "2"})
+    @RequireRole({"0"})
     @PostMapping("/{id}/request-pickup")
-    public Result<Boolean> requestPickup(@PathVariable Long id) {
+    public Result<Boolean> requestPickup(@PathVariable Long id,
+                                         @RequestBody(required = false) ParcelSelfPickupRequest request) {
+        if (request == null || request.getVerificationCode() == null
+                || request.getVerificationCode().trim().isEmpty()) {
+            return Result.error("请输入验证码");
+        }
         User user = currentUser();
-        if (user == null) {
+        if (user == null || user.getEmail() == null || user.getEmail().trim().isEmpty()) {
             return Result.error(401, "Unauthorized");
         }
-        Parcel parcel = parcelService.getById(id);
-        if (parcel == null) {
-            return Result.error("包裹不存在");
+        if (!smsCodeService.verifySmsCode(user.getEmail(), 4, request.getVerificationCode().trim())) {
+            return Result.error("验证码错误或已过期");
         }
-        // 仅收件人本人可申请取件
-        if (!parcel.getRecipientPhone().equals(user.getPhone())) {
-            return Result.error(403, "Forbidden");
-        }
-        boolean success = parcelService.requestPickup(id);
-        return success ? Result.success(true) : Result.error("申请取件失败");
+        boolean success = parcelService.selfPickup(id, currentUserId());
+        return success ? Result.success(true) : Result.error("取件申请提交失败，包裹可能已取件或收件人不匹配");
     }
 
     @RequireRole({"0"})
@@ -202,7 +203,59 @@ public class ParcelController {
             return Result.error("验证码错误或已过期");
         }
         boolean success = parcelService.selfPickup(id, currentUserId());
-        return success ? Result.success(true) : Result.error("Self pickup failed");
+        return success ? Result.success(true) : Result.error("取件申请提交失败，包裹可能已取件或收件人不匹配");
+    }
+
+    @RequireRole({"0"})
+    @PostMapping("/self-pickup/by-tracking")
+    public Result<Boolean> selfPickupByTracking(@RequestBody(required = false) ParcelSelfPickupRequest request) {
+        if (request == null || request.getTrackingNo() == null || request.getTrackingNo().trim().isEmpty()) {
+            return Result.error("Tracking number is required");
+        }
+        if (request.getVerificationCode() == null || request.getVerificationCode().trim().isEmpty()) {
+            return Result.error("Verification code is required");
+        }
+        User user = currentUser();
+        if (user == null || user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            return Result.error(401, "Unauthorized");
+        }
+        if (!smsCodeService.verifySmsCode(user.getEmail(), 4, request.getVerificationCode().trim())) {
+            return Result.error("验证码错误或已过期");
+        }
+        boolean success = parcelService.selfPickupByTracking(request.getTrackingNo().trim(), currentUserId());
+        return success ? Result.success(true) : Result.error("取件申请提交失败，包裹可能已取件或收件人不匹配");
+    }
+
+    @PostMapping("/approve-pickup/by-tracking")
+    public Result<Boolean> approvePickupByTracking(@RequestParam String trackingNo) {
+        Long operatorId = currentUserId();
+        if (operatorId == null) {
+            return Result.error(401, "Unauthorized");
+        }
+        boolean success = parcelService.approvePickupByTracking(trackingNo.trim(), operatorId);
+        return success ? Result.success(true) : Result.error("批准失败，包裹尚未提交取件申请或已处理");
+    }
+
+    @RequireRole({"0"})
+    @PostMapping("/batch/self-pickup")
+    public Result<Integer> batchRequestPickup(@RequestBody(required = false) ParcelBatchSelfPickupRequest request) {
+        if (request == null || request.getParcelIds() == null || request.getParcelIds().isEmpty()) {
+            return Result.error("请选择包裹");
+        }
+        if (request.getVerificationCode() == null || request.getVerificationCode().trim().isEmpty()) {
+            return Result.error("Verification code is required");
+        }
+        User user = currentUser();
+        if (user == null || user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            return Result.error(401, "Unauthorized");
+        }
+        if (!smsCodeService.verifySmsCode(user.getEmail(), 4, request.getVerificationCode().trim())) {
+            return Result.error("验证码错误或已过期");
+        }
+        int successCount = parcelService.batchRequestPickup(request.getParcelIds(), currentUserId());
+        return successCount > 0
+                ? Result.success(successCount)
+                : Result.error("取件申请提交失败，包裹可能已取件或收件人不匹配");
     }
 
     @PostMapping("/batch/print")

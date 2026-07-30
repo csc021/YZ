@@ -46,23 +46,27 @@ public class StationController {
         return success ? Result.success(true) : Result.error("Update brand failed");
     }
 
+    @RequireRole({"0", "1", "2"})
     @GetMapping("/{id}")
     public Result<Station> getById(@PathVariable Long id) {
         Station station = stationService.getById(id);
         return station == null ? Result.error("Station not found") : Result.success(station);
     }
 
+    @RequireRole({"0", "1", "2"})
     @GetMapping("/list")
     public Result<List<Station>> list() {
         return Result.success(stationService.getAllStations());
     }
 
+    @RequireRole({"0", "1", "2"})
     @GetMapping("/manager/{managerId}")
     public Result<Station> getByManagerId(@PathVariable Long managerId) {
         Station station = stationService.getByManagerId(managerId);
         return station == null ? Result.error("Station not found") : Result.success(station);
     }
 
+    @RequireRole({"0", "1", "2"})
     @GetMapping("/status/{status}")
     public Result<List<Station>> getByStatus(@PathVariable Integer status) {
         return Result.success(stationService.getByStatus(status));

@@ -1,10 +1,14 @@
 package com.tf.sc.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 @Data
 public class Parcel {
     /** 主键id */
+    // Snowflake ids exceed JavaScript's safe integer range; keep the exact value in API responses.
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     /** 运单号 */
     private String trackingNo;

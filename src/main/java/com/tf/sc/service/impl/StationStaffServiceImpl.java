@@ -37,7 +37,7 @@ public class StationStaffServiceImpl implements StationStaffService {
             user.setUpdatedAt(DateUtil.nowStr());
             userService.updateUser(user);
         } else if (!Integer.valueOf(1).equals(user.getRole())) {
-            // 站长(2)和管理员(3)不能被添加为快递员
+            // 站长不能被添加为快递员
             return false;
         }
         // 检查该用户是否已被分配到其他驿站（跨驿站查重）

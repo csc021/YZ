@@ -31,7 +31,7 @@ public class Result<T> {
     // ============ 失败响应 ============
 
     public static <T> Result<T> error(String message) {
-        return new Result<>(ResultCode.FAIL.getCode(), message, null);
+        return new Result<>(ResultCode.BAD_REQUEST.getCode(), message, null);
     }
 
     public static <T> Result<T> error(int code, String message) {
@@ -44,7 +44,7 @@ public class Result<T> {
     }
 
     public static <T> Result<T> fail(String message) {
-        return new Result<>(ResultCode.FAIL.getCode(), message, null);
+        return new Result<>(ResultCode.BAD_REQUEST.getCode(), message, null);
     }
 
     // ============ getter / setter ============

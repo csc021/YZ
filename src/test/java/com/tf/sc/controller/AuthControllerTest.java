@@ -48,7 +48,7 @@ class AuthControllerTest {
 
         Result<?> result = authController.register(request);
 
-        assertEquals(ResultCode.FAIL.getCode(), result.getCode());
+        assertEquals(ResultCode.BAD_REQUEST.getCode(), result.getCode());
         assertEquals("手机号格式不正确", result.getMessage());
         verifyNoInteractions(userService);
         verifyNoInteractions(refreshTokenService);
@@ -62,7 +62,7 @@ class AuthControllerTest {
 
         Result<?> result = authController.register(request);
 
-        assertEquals(ResultCode.FAIL.getCode(), result.getCode());
+        assertEquals(ResultCode.BAD_REQUEST.getCode(), result.getCode());
         assertEquals("验证码不能为空", result.getMessage());
     }
 

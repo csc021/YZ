@@ -39,7 +39,7 @@ class ParcelControllerTest {
 
         Result<Parcel> result = parcelController.getById(1L);
 
-        assertEquals(ResultCode.FAIL.getCode(), result.getCode());
+        assertEquals(ResultCode.BAD_REQUEST.getCode(), result.getCode());
         assertEquals("包裹不存在", result.getMessage());
         assertNull(result.getData());
     }
@@ -52,8 +52,8 @@ class ParcelControllerTest {
 
         Result<Boolean> result = parcelController.outbound(request);
 
-        assertEquals(ResultCode.FAIL.getCode(), result.getCode());
-        assertEquals("出库失败，包裹不存在或取件信息不匹配", result.getMessage());
+        assertEquals(ResultCode.BAD_REQUEST.getCode(), result.getCode());
+        assertEquals("出库失败，用户尚未提交取件申请或包裹已处理", result.getMessage());
         assertNull(result.getData());
     }
 

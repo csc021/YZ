@@ -48,6 +48,7 @@ public class DataInitializer {
         ensureSmsCodeColumn("expire_time", "VARCHAR(32) NULL");
         ensureSmsCodeColumn("created_at", "VARCHAR(32) NULL");
         ensureSmsCodePhoneNullable();
+        migrateLegacyAdminRole();
         ensureParcelShelfNullable();
         ensureMailOrderTable();
         // 传感器/分区相关表
@@ -80,6 +81,16 @@ public class DataInitializer {
     private void ensureSmsCodePhoneNullable() {
         if (columnExists("sms_code", "phone")) {
             jdbcTemplate.execute("ALTER TABLE `sms_code` MODIFY COLUMN `phone` VARCHAR(32) NULL");
+        }
+    }
+
+    private void migrateLegacyAdminRole() {
+        int migrated = jdbcTemplate.update(
+                "UPDATE `user` SET `role` = ? WHERE `role` = ?",
+                Constants.ROLE_STATION_MASTER,
+                3);
+        if (migrated > 0) {
+            log.info("Migrated {} legacy administrator accounts to station master", migrated);
         }
     }
 
@@ -119,11 +130,28 @@ public class DataInitializer {
                             "`carrier_id` BIGINT," +
                             "`station_id` BIGINT," +
                             "`status` INT," +
+                            "`order_no` VARCHAR(64)," +
+                            "`pickup_code` VARCHAR(32)," +
+                            "`shelf_id` BIGINT," +
                             "`remark` VARCHAR(255)," +
                             "`created_at` VARCHAR(32)," +
                             "`updated_at` VARCHAR(32)" +
                             ")"
             );
+            return;
+        }
+
+        // Older databases may have been created before these fields were added
+        // to the MailOrder entity. Keep the migration idempotent so list/detail
+        // queries continue to work after an upgrade.
+        ensureMailOrderColumn("order_no", "VARCHAR(64) NULL");
+        ensureMailOrderColumn("pickup_code", "VARCHAR(32) NULL");
+        ensureMailOrderColumn("shelf_id", "BIGINT NULL");
+    }
+
+    private void ensureMailOrderColumn(String column, String definition) {
+        if (!columnExists("mail_order", column)) {
+            jdbcTemplate.execute("ALTER TABLE `mail_order` ADD COLUMN `" + column + "` " + definition);
         }
     }
 
@@ -211,6 +239,7 @@ public class DataInitializer {
     }
 
     private void ensureParcelColumns() {
+        ensureColumn("parcel", "pickup_requested", "TINYINT NOT NULL DEFAULT 0");
         ensureColumn("parcel", "zone_id", "BIGINT NULL");
         ensureColumn("parcel", "parcel_type_id", "BIGINT NULL");
         ensureColumn("parcel", "sensor_temp", "DECIMAL(5,1) NULL");

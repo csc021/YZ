@@ -109,7 +109,41 @@ public class ParcelServiceImpl extends ServiceImpl<ParcelMapper, Parcel> impleme
     @Override
     @Transactional
     public boolean selfPickup(Long parcelId, Long userId) {
-        Parcel parcel = getById(parcelId);
+        return requestPickupParcel(getById(parcelId), userId);
+    }
+
+    @Override
+    @Transactional
+    public boolean selfPickupByTracking(String trackingNo, Long userId) {
+        return requestPickupParcel(findPendingByTracking(trackingNo), userId);
+    }
+
+    @Override
+    @Transactional
+    public boolean approvePickupByTracking(String trackingNo, Long outboundBy) {
+        Parcel parcel = findPendingByTracking(trackingNo);
+        if (parcel == null || !Integer.valueOf(1).equals(parcel.getPickupRequested())) {
+            return false;
+        }
+        return completeOutbound(parcel, outboundBy);
+    }
+
+    @Override
+    @Transactional
+    public int batchRequestPickup(List<Long> parcelIds, Long userId) {
+        if (parcelIds == null || parcelIds.isEmpty()) {
+            return 0;
+        }
+        int successCount = 0;
+        for (Long parcelId : parcelIds) {
+            if (requestPickupParcel(getById(parcelId), userId)) {
+                successCount++;
+            }
+        }
+        return successCount;
+    }
+
+    private boolean requestPickupParcel(Parcel parcel, Long userId) {
         User user = userService.findById(userId);
         if (parcel == null || user == null || !Integer.valueOf(0).equals(parcel.getStatus())) {
             return false;
@@ -117,7 +151,7 @@ public class ParcelServiceImpl extends ServiceImpl<ParcelMapper, Parcel> impleme
         if (!parcel.getRecipientPhone().equals(user.getPhone())) {
             return false;
         }
-        return completeOutbound(parcel, userId);
+        return requestPickup(parcel.getId());
     }
 
     @Override
@@ -213,6 +247,9 @@ public class ParcelServiceImpl extends ServiceImpl<ParcelMapper, Parcel> impleme
         if (parcel == null || !Integer.valueOf(0).equals(parcel.getStatus())) {
             return false;
         }
+        if (Integer.valueOf(1).equals(parcel.getPickupRequested())) {
+            return true;
+        }
         // 直接 SQL 更新，绕过 MyBatis-Plus 字段策略
         return baseMapper.requestPickup(parcelId) > 0;
     }
@@ -227,13 +264,19 @@ public class ParcelServiceImpl extends ServiceImpl<ParcelMapper, Parcel> impleme
     }
 
     private boolean completeOutbound(Parcel parcel, Long outboundBy) {
-        if (parcel == null || !Integer.valueOf(0).equals(parcel.getStatus())) {
+        if (parcel == null || outboundBy == null
+                || !Integer.valueOf(0).equals(parcel.getStatus())
+                || !Integer.valueOf(1).equals(parcel.getPickupRequested())) {
+            return false;
+        }
+        String outboundTime = DateUtil.nowStr();
+        if (baseMapper.completeOutbound(parcel.getId(), outboundBy, outboundTime) <= 0) {
             return false;
         }
         parcel.setStatus(1);
         parcel.setOutboundBy(outboundBy);
-        parcel.setOutboundTime(DateUtil.nowStr());
-        return updateById(parcel);
+        parcel.setOutboundTime(outboundTime);
+        return true;
     }
 
     private Parcel findPendingByCode(String pickupCode) {

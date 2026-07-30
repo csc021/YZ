@@ -2,6 +2,7 @@ package com.tf.sc.common;
 
 public enum ResultCode {
     SUCCESS(200, "success"),
+    BAD_REQUEST(400, "bad request"),
     FAIL(500, "fail"),
     UNAUTHORIZED(401, "unauthorized"),
     FORBIDDEN(403, "forbidden");

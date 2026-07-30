@@ -10,12 +10,6 @@ public final class Constants {
     public static final int ROLE_COURIER = 1;
     public static final int ROLE_STATION_MASTER = 2;
 
-    /**
-     * @deprecated Admin role is kept only for historical compatibility.
-     */
-    @Deprecated
-    public static final int ROLE_ADMIN = 3;
-
     public static final String[] STATION_BRANDS = {
             "cainiao", "jd", "jitu", "ems", "yto", "sto", "yunda", "sf", "zto"
     };

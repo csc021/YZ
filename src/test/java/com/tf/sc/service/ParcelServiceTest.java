@@ -1,17 +1,26 @@
 package com.tf.sc.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tf.sc.dto.request.ParcelInboundRequest;
 import com.tf.sc.dto.request.ParcelOutboundRequest;
 import com.tf.sc.dto.request.ParcelQueryRequest;
 import com.tf.sc.entity.Parcel;
+import com.tf.sc.mapper.ParcelMapper;
 import com.tf.sc.service.impl.ParcelServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -22,6 +31,14 @@ class ParcelServiceTest {
     @Spy
     @InjectMocks
     private ParcelServiceImpl parcelService;
+
+    @Mock
+    private ParcelMapper parcelMapper;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(parcelService, "baseMapper", parcelMapper);
+    }
 
     @Test
     void inboundInitializesParcelAndSavesIt() {
@@ -52,11 +69,12 @@ class ParcelServiceTest {
         Parcel parcel = new Parcel();
         parcel.setId(10L);
         parcel.setStatus(0);
+        parcel.setPickupRequested(1);
         ParcelOutboundRequest request = new ParcelOutboundRequest();
         request.setParcelId(10L);
         request.setOutboundBy(99L);
         doReturn(parcel).when(parcelService).getById(10L);
-        doReturn(true).when(parcelService).updateById(parcel);
+        when(parcelMapper.completeOutbound(eq(10L), eq(99L), anyString())).thenReturn(1);
 
         boolean success = parcelService.outbound(request);
 
@@ -64,7 +82,24 @@ class ParcelServiceTest {
         assertEquals(1, parcel.getStatus());
         assertEquals(99L, parcel.getOutboundBy());
         assertNotNull(parcel.getOutboundTime());
-        verify(parcelService).updateById(parcel);
+        verify(parcelMapper).completeOutbound(eq(10L), eq(99L), anyString());
+    }
+
+    @Test
+    void outboundRejectsParcelWithoutPickupRequest() {
+        Parcel parcel = new Parcel();
+        parcel.setId(10L);
+        parcel.setStatus(0);
+        parcel.setPickupRequested(0);
+        ParcelOutboundRequest request = new ParcelOutboundRequest();
+        request.setParcelId(10L);
+        request.setOutboundBy(99L);
+        doReturn(parcel).when(parcelService).getById(10L);
+
+        boolean success = parcelService.outbound(request);
+
+        assertFalse(success);
+        verifyNoInteractions(parcelMapper);
     }
 
     @Test
@@ -79,7 +114,7 @@ class ParcelServiceTest {
         boolean success = parcelService.outbound(request);
 
         assertFalse(success);
-        verify(parcelService, never()).updateById(any(Parcel.class));
+        verifyNoInteractions(parcelMapper);
     }
 
     @Test
@@ -95,5 +130,24 @@ class ParcelServiceTest {
         assertSame(page, result);
         assertEquals(1L, request.getPageNum());
         assertEquals(10L, request.getPageSize());
+    }
+
+    @Test
+    void queryFiltersByPickupRequestState() {
+        TableInfoHelper.initTableInfo(
+                new MapperBuilderAssistant(new MybatisConfiguration(), "parcel-test"),
+                Parcel.class);
+        Page<Parcel> page = new Page<>(1, 10);
+        doReturn(page).when(parcelService).page(any(Page.class), any(Wrapper.class));
+        ParcelQueryRequest request = new ParcelQueryRequest();
+        request.setPickupRequested(1);
+
+        parcelService.query(request);
+
+        ArgumentCaptor<Wrapper> wrapperCaptor = ArgumentCaptor.forClass(Wrapper.class);
+        verify(parcelService).page(any(Page.class), wrapperCaptor.capture());
+        LambdaQueryWrapper<Parcel> wrapper = (LambdaQueryWrapper<Parcel>) wrapperCaptor.getValue();
+        assertTrue(wrapper.getSqlSegment().contains("pickup_requested"));
+        assertTrue(wrapper.getParamNameValuePairs().containsValue(1));
     }
 }

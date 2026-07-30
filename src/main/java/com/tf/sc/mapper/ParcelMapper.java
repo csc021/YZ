@@ -19,4 +19,9 @@ public interface ParcelMapper extends BaseMapper<Parcel> {
 
     /** 取件申请：XML 实现，绕过 MyBatis-Plus 字段策略 */
     int requestPickup(@Param("id") Long id);
+
+    /** 仅允许已提交取件申请且仍待取的包裹完成出库。 */
+    int completeOutbound(@Param("id") Long id,
+                         @Param("outboundBy") Long outboundBy,
+                         @Param("outboundTime") String outboundTime);
 }

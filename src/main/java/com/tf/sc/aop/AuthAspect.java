@@ -2,10 +2,9 @@ package com.tf.sc.aop;
 
 import com.tf.sc.annotation.RequireRole;
 import com.tf.sc.entity.User;
+import com.tf.sc.exception.ForbiddenException;
 import com.tf.sc.exception.UnauthorizedException;
 import com.tf.sc.service.UserService;
-import com.tf.sc.utils.JwtUtil;
-import com.tf.sc.common.Constants;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -41,7 +40,7 @@ public class AuthAspect {
         boolean allowed = Arrays.stream(requireRole.value())
                 .anyMatch(role -> role.equals(String.valueOf(user.getRole())));
         if (!allowed) {
-            throw new UnauthorizedException("无权限访问");
+            throw new ForbiddenException("无权限访问");
         }
         return joinPoint.proceed();
     }
@@ -65,14 +64,6 @@ public class AuthAspect {
         if (value instanceof Long) {
             return (Long) value;
         }
-        String header = request.getHeader(Constants.AUTH_HEADER);
-        if (header == null || !header.startsWith(Constants.JWT_PREFIX)) {
-            return null;
-        }
-        try {
-            return Long.valueOf(JwtUtil.parseSubject(header.substring(Constants.JWT_PREFIX.length())));
-        } catch (RuntimeException ex) {
-            return null;
-        }
+        return null;
     }
 }

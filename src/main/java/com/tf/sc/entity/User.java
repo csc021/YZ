@@ -18,7 +18,7 @@ public class User {
     private String nickname;
     /** 头像URL */
     private String avatar;
-    /** 角色：0-普通用户 1-员工 2-站长 3-管理员 */
+    /** 角色：0-普通用户 1-快递员 2-站长 */
     private Integer role;
     /** 审核状态：0-待审核 1-已通过 2-已拒绝 */
     private Integer auditStatus;

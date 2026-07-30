@@ -39,4 +39,11 @@
     <update id="requestPickup">
         UPDATE parcel SET pickup_requested = 1 WHERE id = #{id} AND status = 0
     </update>
+
+    <!-- 快递员确认：只有用户已提交申请的待取包裹才能出库 -->
+    <update id="completeOutbound">
+        UPDATE parcel
+        SET status = 1, outbound_by = #{outboundBy}, outbound_time = #{outboundTime}
+        WHERE id = #{id} AND status = 0 AND pickup_requested = 1
+    </update>
 </mapper>

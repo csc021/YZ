@@ -14,6 +14,9 @@ ALTER TABLE station
 ALTER TABLE parcel
     MODIFY COLUMN shelf_id BIGINT NULL COMMENT 'shelf id can be null';
 
+-- 角色仅保留 0-普通用户、1-快递员、2-站长。
+UPDATE user SET role = 2 WHERE role = 3;
+
 CREATE TABLE IF NOT EXISTS mail_order (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL,
@@ -35,6 +38,9 @@ CREATE TABLE IF NOT EXISTS mail_order (
     carrier_id BIGINT,
     station_id BIGINT,
     status INT,
+    order_no VARCHAR(64),
+    pickup_code VARCHAR(32),
+    shelf_id BIGINT,
     remark VARCHAR(255),
     created_at VARCHAR(32),
     updated_at VARCHAR(32)
